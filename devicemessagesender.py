@@ -12,7 +12,7 @@ MSG_INTERVAL = 1/24 # Sample rate of the sensor
 async def main():
 
     # Get the data list from our library
-    dataList = fileparser.getDataListFromFile(
+    dataList = fileparser.get_data_list_from_file(
         'dataset-cse591\\data\\subject1\\shoulderElevation\\trainingAndPrediction\\prediction_otherClassesBeforeAndAfter15ConsecutiveShoulderElevations\\1.log')
 
     # Fetch the connection string from an enviornment variable

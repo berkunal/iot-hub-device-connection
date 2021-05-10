@@ -8,7 +8,7 @@ class Data:
         self.z = z
 
 
-def getDataListFromFile(fileName):
+def get_data_list_from_file(fileName):
     with open(fileName, 'r') as reader:
 
         dataList = []
@@ -42,7 +42,5 @@ def getDataListFromFile(fileName):
 
                     data = Data(x, y, z)
                     dataList.append(data)
-                    # print('Shoulder elevation x: ' + data.x +
-                    #       ' y: ' + data.y + ' z: ' + data.z)
 
         return dataList
