@@ -69,9 +69,9 @@ df_test = df[df['user-id'] > 28]
 df_train = df[df['user-id'] <= 28]
 
 # Normalize features for training data set
-df_train['x-axis'] = utility.utility.feature_normalize(df['x-axis'])
-df_train['y-axis'] = utility.utility.feature_normalize(df['y-axis'])
-df_train['z-axis'] = utility.utility.feature_normalize(df['z-axis'])
+df_train['x-axis'] = utility.feature_normalize(df['x-axis'])
+df_train['y-axis'] = utility.feature_normalize(df['y-axis'])
+df_train['z-axis'] = utility.feature_normalize(df['z-axis'])
 # Round in order to comply to NSNumber from iOS
 df_train = df_train.round({'x-axis': 6, 'y-axis': 6, 'z-axis': 6})
 
@@ -189,9 +189,9 @@ plt.show()
 print("\n--- Check against test data ---\n")
 
 # Normalize features for training data set
-df_test['x-axis'] = utility.utility.feature_normalize(df_test['x-axis'])
-df_test['y-axis'] = utility.utility.feature_normalize(df_test['y-axis'])
-df_test['z-axis'] = utility.utility.feature_normalize(df_test['z-axis'])
+df_test['x-axis'] = utility.feature_normalize(df_test['x-axis'])
+df_test['y-axis'] = utility.feature_normalize(df_test['y-axis'])
+df_test['z-axis'] = utility.feature_normalize(df_test['z-axis'])
 
 df_test = df_test.round({'x-axis': 6, 'y-axis': 6, 'z-axis': 6})
 

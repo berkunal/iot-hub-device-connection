@@ -5,15 +5,14 @@ import fileparser
 from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 
-MSG_TXT = '{{"x": {x},"y": {y},"z": {z}}}'
-MSG_INTERVAL = 1/24 # Sample rate of the sensor
+MSG_TXT = '{{"user": {user},"activity": {activity},"timestamp": {timestamp},"x": {x},"y": {y},"z": {z}}}'
+MSG_INTERVAL = 1/20 # Sample rate of the sensor
 
 
 async def main():
 
     # Get the data list from our library
-    dataList = fileparser.get_data_list_from_file(
-        'dataset-cse591\\data\\subject1\\shoulderElevation\\trainingAndPrediction\\prediction_otherClassesBeforeAndAfter15ConsecutiveShoulderElevations\\1.log')
+    dataList = fileparser.get_data_list_from_wisdm('WISDM_ar_v1.1\\WISDM_ar_v1.1_raw.txt')
 
     # Fetch the connection string from an enviornment variable
     conn_str = "HostName=cse591.azure-devices.net;DeviceId=shoulder-sensor-subject-1;SharedAccessKey=Z9ESJBeVapudNU1tHECQCnMg/EtxSjVJf3oSu5YrPxQ="
@@ -26,7 +25,7 @@ async def main():
 
     # Loop through the data and send to IoT Hub
     for data in dataList:
-        msg_txt_formatted = MSG_TXT.format(x=data.x, y=data.y, z=data.z)
+        msg_txt_formatted = MSG_TXT.format(user=data.user, activity=data.activity, timestamp=data.timestamp, x=data.x, y=data.y, z=data.z)
         message = Message(msg_txt_formatted)
 
         print( "Sending message: {}".format(message) )

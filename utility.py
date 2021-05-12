@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import os
-import utility
 from scipy import stats
 
 from sklearn import metrics
@@ -115,7 +114,6 @@ def convert_to_float(x):
         return np.nan
 
 
-# Not used right now
 def feature_normalize(dataset):
 
     mu = np.mean(dataset, axis=0)
