@@ -21,21 +21,19 @@ def get_data_list_from_wisdm(fileName):
     with open(fileName, 'r') as reader:
 
         dataList = []
-        i = 0
 
         for line in reader.readlines():
             user, activity, timestamp, x, y, z = line.split(';')[0].split(',')
-            data = DataWISDM(user, activity, timestamp, x, y, z)
-            dataList.append(data)
+            if user == '33':
+                data = DataWISDM(user, activity, timestamp, x, y, z)
+                dataList.append(data)
 
             # End Of File
             if line == '\n':
                 print('Done parsing the file')
                 break
 
-            i += 1
-
-            if i == 10:
+            if user == '17':
                 return dataList
 
 

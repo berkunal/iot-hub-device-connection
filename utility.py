@@ -24,7 +24,8 @@ LABELS = ["Downstairs",
           "Standing",
           "Upstairs",
           "Walking"]
-          
+
+
 def feature_normalize(dataset):
 
     mu = np.mean(dataset, axis=0)
@@ -52,7 +53,6 @@ def show_confusion_matrix(validations, predictions):
 
 def show_basic_dataframe_info(dataframe,
                               preview_rows=20):
-
     """
     This function shows basic information for the given dataframe
     Args:
@@ -74,7 +74,6 @@ def show_basic_dataframe_info(dataframe,
 
 
 def read_data(file_path):
-
     """
     This function reads the accelerometer data from a file
     Args:
@@ -94,9 +93,9 @@ def read_data(file_path):
                      names=column_names)
     # Last column has a ";" character which must be removed ...
     df['z-axis'].replace(regex=True,
-      inplace=True,
-      to_replace=r';',
-      value=r'')
+                         inplace=True,
+                         to_replace=r';',
+                         value=r'')
     # ... and then this column must be transformed to float explicitly
     df['z-axis'] = df['z-axis'].apply(convert_to_float)
     # This is very important otherwise the model will not fit and loss
@@ -134,8 +133,8 @@ def plot_axis(ax, x, y, title):
 def plot_activity(activity, data):
 
     fig, (ax0, ax1, ax2) = plt.subplots(nrows=3,
-         figsize=(15, 10),
-         sharex=True)
+                                        figsize=(15, 10),
+                                        sharex=True)
     plot_axis(ax0, data['timestamp'], data['x-axis'], 'x-axis')
     plot_axis(ax1, data['timestamp'], data['y-axis'], 'y-axis')
     plot_axis(ax2, data['timestamp'], data['z-axis'], 'z-axis')
@@ -146,7 +145,6 @@ def plot_activity(activity, data):
 
 
 def create_segments_and_labels(df, time_steps, step, label_name):
-
     """
     This function receives a dataframe and returns the reshaped segments
     of x,y,z acceleration as well as the corresponding labels
@@ -175,7 +173,74 @@ def create_segments_and_labels(df, time_steps, step, label_name):
         labels.append(label)
 
     # Bring the segments into a better shape
-    reshaped_segments = np.asarray(segments, dtype= np.float32).reshape(-1, time_steps, N_FEATURES)
+    reshaped_segments = np.asarray(
+        segments, dtype=np.float32).reshape(-1, time_steps, N_FEATURES)
     labels = np.asarray(labels)
 
     return reshaped_segments, labels
+
+
+def load_trained_model():
+    print("Trained model loading...")
+    # load json and create model
+    json_file = open('model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    model_m = model_from_json(loaded_model_json)
+    # load weights into new model
+    model_m.load_weights("model.h5")
+    print("Loaded model from disk")
+
+    return model_m
+
+
+def create_segments_and_labels1(df, time_steps, step, label_name):
+    """
+    This function receives a dataframe and returns the reshaped segments
+    of x,y,z acceleration as well as the corresponding labels
+    Args:
+        df: Dataframe in the expected format
+        time_steps: Integer value of the length of a segment that is created
+    Returns:
+        reshaped_segments
+        labels:
+    """
+
+    # x, y, z acceleration as features
+    N_FEATURES = 3
+    # Number of steps to advance in each iteration (for me, it should always
+    # be equal to the time_steps in order to have no overlap between segments)
+    # step = time_steps
+    segments = []
+    labels = []
+    for i in range(0, len(df) - time_steps, step):
+        xs = df['x'].values[i: i + time_steps]
+        ys = df['y'].values[i: i + time_steps]
+        zs = df['z'].values[i: i + time_steps]
+        # Retrieve the most often used label in this segment
+        label = stats.mode(df[label_name][i: i + time_steps])[0][0]
+        segments.append([xs, ys, zs])
+        labels.append(label)
+
+    # Bring the segments into a better shape
+    reshaped_segments = np.asarray(
+        segments, dtype=np.float32).reshape(-1, time_steps, N_FEATURES)
+    labels = np.asarray(labels)
+
+    return reshaped_segments, labels
+
+
+def label_encoding(row):
+    if row['activity'] == 'Downstairs':
+        val = 0
+    elif row['activity'] == 'Jogging':
+        val = 1
+    elif row['activity'] == 'Sitting':
+        val = 2
+    elif row['activity'] == 'Standing':
+        val = 3
+    elif row['activity'] == 'Upstairs':
+        val = 4
+    elif row['activity'] == 'Walking':
+        val = 5
+    return val

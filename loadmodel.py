@@ -14,17 +14,7 @@ from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.metrics import classification_report
 
-print("Trained model loading...")
-# load json and create model
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-model_m = model_from_json(loaded_model_json)
-# load weights into new model
-model_m.load_weights("model.h5")
-print("Loaded model from disk")
-
-# evaluate loaded model on test data
+model_m = utility.load_trained_model()
 model_m.compile(loss='categorical_crossentropy',
                 optimizer='adam', metrics=['accuracy'])
 

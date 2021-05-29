@@ -5,7 +5,7 @@ import fileparser
 from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 
-MSG_TXT = '{{"user": {user},"activity": {activity},"timestamp": {timestamp},"x": {x},"y": {y},"z": {z}}}'
+MSG_TXT = '{{"user": {user},"activity": "{activity}","timestamp": {timestamp},"x": {x},"y": {y},"z": {z}}}'
 MSG_INTERVAL = 1/20 # Sample rate of the sensor
 
 
@@ -15,7 +15,7 @@ async def main():
     dataList = fileparser.get_data_list_from_wisdm('WISDM_ar_v1.1\\WISDM_ar_v1.1_raw.txt')
 
     # Fetch the connection string from an enviornment variable
-    conn_str = "HostName=cse591.azure-devices.net;DeviceId=shoulder-sensor-subject-1;SharedAccessKey=Z9ESJBeVapudNU1tHECQCnMg/EtxSjVJf3oSu5YrPxQ="
+    conn_str = "HostName=berlinHub.azure-devices.net;DeviceId=subject_33;SharedAccessKey=wMVcHCziLXiH6CQRf/uz8uUnHIiQjkF1yAPKQ9t5iHU="
 
     # Create instance of the device client using the connection string
     device_client = IoTHubDeviceClient.create_from_connection_string(conn_str)
