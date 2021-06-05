@@ -6,6 +6,8 @@ import pandas as pd
 import seaborn as sns
 import os
 import utility
+import sys
+from scipy.stats import norm
 from scipy import stats
 
 from sklearn import metrics
@@ -34,25 +36,25 @@ TIME_PERIODS = 80
 STEP_DISTANCE = 40
 
 
-print("\n--- Load, inspect and transform data ---\n")
+# print("\n--- Load, inspect and transform data ---\n")
 
 # Load data set containing all the data from csv
 df = utility.read_data('WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt')
 
 # Describe the data
-utility.show_basic_dataframe_info(df, 20)
+# utility.show_basic_dataframe_info(df, 20)
 
-df['activity'].value_counts().plot(kind='bar',
-                                   title='Training Examples by Activity Type')
-plt.show()
+# df['activity'].value_counts().plot(kind='bar',
+#                                    title='Training Examples by Activity Type')
+# plt.show()
 
-df['user-id'].value_counts().plot(kind='bar',
-                                  title='Training Examples by User')
-plt.show()
+# df['user-id'].value_counts().plot(kind='bar',
+#                                   title='Training Examples by User')
+# plt.show()
 
-for activity in np.unique(df["activity"]):
-    subset = df[df["activity"] == activity][:180]
-    utility.plot_activity(activity, subset)
+# for activity in np.unique(df["activity"]):
+#     subset = df[df["activity"] == activity][:180]
+#     utility.plot_activity(activity, subset)
 
 # Define column name of the label vector
 LABEL = "ActivityEncoded"
@@ -65,8 +67,44 @@ df[LABEL] = le.fit_transform(df["activity"].values.ravel())
 print("\n--- Reshape the data into segments ---\n")
 
 # Differentiate between test set and training set
-df_test = df[df['user-id'] > 28]
-df_train = df[df['user-id'] <= 28]
+df_test = df[(df['user-id'] > 28) & (df['ActivityEncoded'] == 1)] # Only Jogging
+# df_train = df[(df['user-id'] <= 28) & (df['ActivityEncoded'] == 1)] # Only Jogging
+
+# len = df_train.size
+# for i in range(0, len, 80):
+#     if i == 262640:
+#         break
+
+#     df_segment = df_train.iloc[i:i+80]
+
+#     mean, std = norm.fit(df_segment['x-axis'].to_numpy())
+#     rnd_x = norm.rvs(size=80)
+#     output_x = [round(x*mean + std, 7) for x in rnd_x]
+
+#     mean, std = norm.fit(df_segment['y-axis'].to_numpy())
+#     rnd_y = norm.rvs(size=80)
+#     output_y = [round(y*mean + std, 7) for y in rnd_y]
+
+#     mean, std = norm.fit(df_segment['z-axis'].to_numpy())
+#     rnd_z = norm.rvs(size=80)
+#     output_z = [round(z*mean + std, 7) for z in rnd_z]
+
+#     output_array = []
+
+#     for j in range(80):
+#         temp_array = [0, 'Other', 0, output_x[j], output_y[j], output_z[j], 0]
+#         output_array.append(temp_array)
+
+#     temp_df = pd.DataFrame(np.array(output_array), columns=["user-id", "activity", "timestamp", "x-axis", "y-axis", "z-axis", "ActivityEncoded"])
+
+#     df_train = df_train.append(temp_df, ignore_index=True)
+
+# df_train.to_pickle("jogging_dataset.pkl")
+
+df_train = pd.read_pickle("jogging_dataset.pkl")
+df_train['ActivityEncoded'] = df_train['ActivityEncoded'].astype('int')
+print(df_train)
+
 
 # Normalize features for training data set
 df_train['x-axis'] = utility.feature_normalize(df['x-axis'])
@@ -97,7 +135,7 @@ print('y_train shape: ', y_train.shape)
 
 # Set input & output dimensions
 num_time_periods, num_sensors = x_train.shape[1], x_train.shape[2]
-num_classes = le.classes_.size
+num_classes = 2
 print(list(le.classes_))
 
 # Set input_shape / reshape for Keras
@@ -158,7 +196,7 @@ model_m.compile(loss='categorical_crossentropy',
                 optimizer='adam', metrics=['accuracy'])
 
 # Hyper-parameters
-BATCH_SIZE = 400
+BATCH_SIZE = 128
 EPOCHS = 50
 
 # Enable validation to use ModelCheckpoint and EarlyStopping callbacks.

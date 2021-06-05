@@ -18,12 +18,8 @@ from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D
 from keras.utils import np_utils
 
 
-LABELS = ["Downstairs",
-          "Jogging",
-          "Sitting",
-          "Standing",
-          "Upstairs",
-          "Walking"]
+LABELS = ["Other",
+          "Jogging"]
 
 
 def feature_normalize(dataset):
