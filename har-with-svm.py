@@ -22,7 +22,7 @@ df['y-axis'] = utility.feature_normalize(df['y-axis'])
 df['z-axis'] = utility.feature_normalize(df['z-axis'])
 
 df = df.round({'x-axis': 6, 'y-axis': 6, 'z-axis': 6})
-"""
+
 # PREPARE TRAINING DATA
 df_train = df[(df['user-id'] <= 28) & (df['ActivityEncoded'] == 5)]
 
@@ -63,7 +63,7 @@ clf.fit(train_X, train_Y)
 pickle.dump(clf, open('walking_trained_model.sav', 'wb'))
 
 print('Training ended - ' + str(datetime.datetime.now().time()))
-"""
+
 # PREPARE TEST DATA
 df_test = df[(df['user-id'] > 28) & (df['ActivityEncoded'] == 5)]
 
